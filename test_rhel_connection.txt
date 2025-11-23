@@ -1,1 +1,0 @@
-RHEL system connected to GitHub!
