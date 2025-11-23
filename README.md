@@ -1,109 +1,127 @@
-# Linux • Cloud • Security Mastery  
-*A curated portfolio of practical projects, configurations, and troubleshooting notes demonstrating real-world Linux administration, automation, and cloud security skills.*
+# Linux • Cloud • Security Mastery
+
+This repository documents practical, hands-on work across Linux administration, automation, cloud technologies, and security fundamentals. Every section is built from real troubleshooting, real configuration tasks, and repeatable workflows that strengthen system understanding over time.
 
 ---
 
-## 📌 Overview
+## Philosophy
 
-This repository documents my hands-on work across Linux system administration, cloud engineering, DevOps, and security.  
-It includes:
+This repository is guided by deliberate practice. The focus is not on collecting commands, but on understanding how systems behave, why issues occur, and how to solve them in a consistent, reliable way.
 
-- Real troubleshooting cases  
-- Polished, reproducible configurations  
-- Automation workflows  
-- Cloud infrastructure labs  
-- Security investigations  
-- Notes and mini-projects showing attention to detail and technical curiosity
+The work captured here emphasizes:
 
-Everything in this repository is the result of real systems I installed, broke, repaired, or optimized.
+- Methodical investigation  
+- Clear, repeatable documentation  
+- Root-cause analysis  
+- Accurate system behavior understanding  
+- Building long-term technical habits through real work  
 
----
-
-## 📂 Repository Structure
-
-### **1. `linux-admin/`**  
-Linux administration projects and labs, including:
-- Shell scripting  
-- System configuration  
-- Package management
-- Networking  
-- User and permission management  
-
-### **2. `cloud/`**  
-Cloud engineering practices:
-- OCI, AWS, or Azure labs  
-- CLI usage  
-- Infrastructure configuration  
-- Security policies  
-- Storage and networking experiments  
-
-### **3. `security/`**  
-Security-focused exercises:
-- Hardening  
-- Logging & auditing  
-- Identity and access management  
-- Incident response basics  
-
-### **4. `desktop-environment/`**
-Fixes and configuration improvements for desktop UX on Linux systems.  
-These demonstrate attention to detail, troubleshooting, and polish.
-
-Example fixes:
-- Brave browser launcher icon fix  
-- Tilix VTE integration fix  
-
-### **5. `attention-to-detail/`**
-A collection of “micro-fixes” that highlight:
-- Problem identification  
-- Root cause analysis  
-- Step-by-step remediation  
-- Verification  
-
-Each entry is written like a real troubleshooting ticket.
+The goal is to create a solid foundation that supports deeper growth in Linux, cloud, automation, and security engineering.
 
 ---
 
-## 🧠 Philosophy
+## Repository Structure
 
-This repo is intentionally **skills-oriented**, not theory-oriented.
+The project is organized by practical skill areas and real configuration scenarios.
 
-I build, break, and repair systems intentionally to learn:
+### **1. Linux Administration (`linux-admin/`)**
+Configurations, fixes, and workflows related to Linux system maintenance and operations.
 
-- How Linux behaves under stress  
-- What common mistakes look like  
-- How real-world engineers solve problems  
-- How cloud and security tools interact with OS layers  
-
-This is the kind of knowledge hiring managers want to see in junior–mid Linux/Cloud/Security roles.
-
----
-
-## 🎯 Goals of This Repository
-
-- Develop mastery through hands-on experience  
-- Build a professional, public portfolio of work  
-- Demonstrate skill progression and technical depth  
-- Document repeatable procedures  
-- Create a personal “knowledge base” for future work  
-- Show attention to detail — essential for Linux, cloud, and security roles  
+Includes:
+- Shell scripting
+- Bash configuration
+- Package and service management
+- Filesystem work
+- Core OS behaviors
 
 ---
 
-## 🛠️ Technologies & Tools Used
-
-- **RHEL, Arch, Ubuntu**
-- **Bash, Python**
-- **Tilix, GNOME, systemd**
-- **Git, GitHub**
-- **OCI, AWS CLI, Azure CLI**
-- **Docker**
-- **Security tools (auditd, firewalld, SELinux basics)**
+### **2. Cloud (`cloud/`)**
+Cloud-focused exercises and notes.  
+Covers:
+- Cloud CLI configuration
+- Authentication & keys
+- Service behavior and troubleshooting
+- Small cloud automation tasks
 
 ---
 
-## 📬 Contact
+### **3. Automation (`automation/`)**
+Hands-on automation using Bash, Python, Ansible, and other tooling.
 
-**Benjamin Panzer**  
-*Linux • Cloud • Security Engineer in training*  
-GitHub: https://github.com/sneakyturtlekungfu  
+Focus areas:
+- Repeatable configuration patterns
+- Script and playbook structure
+- Task automation fundamentals
+
+---
+
+### **4. Security (`security/`)**
+Security fundamentals approached through practical exercises.
+
+Includes:
+- Basic scanning
+- Key management
+- System behavior analysis
+- Secure configuration habits
+
+---
+
+### **5. Desktop Environment Fixes (`desktop-environment/`)**
+Small but meaningful fixes that come from real system troubleshooting.
+
+Examples:
+- Brave launcher icon correction on RHEL
+- Tilix VTE integration cleanup
+- Environment configuration issues
+
+These reflect attention to detail and precise system correction.
+
+---
+
+### **6. Attention to Detail (`attention-to-detail/`)**
+A dedicated log of small, targeted fixes and investigations.
+
+This captures:
+- Unexpected behavior
+- Missing icons, warnings, configuration quirks
+- Steps taken to identify and resolve issues
+
+These entries highlight consistent habits around documentation, understanding root causes, and improving system clarity.
+
+---
+
+## How to Use This Repository
+
+This repo is meant to be **worked through**, not skimmed.
+
+Recommended approach:
+
+1. Navigate by skill area (Linux, Cloud, Automation, Security).  
+2. Reproduce the steps from each fix or configuration.  
+3. Use the troubleshooting entries to strengthen investigative habits.  
+4. Expand the areas as your environment and projects evolve.
+
+---
+
+## Long-Term Vision
+
+The repository will continue to grow as more topics are explored, including:
+
+- Containers & orchestration
+- Advanced automation patterns
+- Cloud security tooling
+- Linux hardening and monitoring
+- DFIR-style investigations
+- Complex network and service diagnostics
+
+Each addition will follow the same practice-oriented philosophy:
+understand the system, document the process, refine the solution.
+
+---
+
+## License
+
+This work is provided for learning, skill development, and personal documentation.  
+Use and adapt freely.
 
