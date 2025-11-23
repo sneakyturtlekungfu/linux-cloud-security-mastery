@@ -26,7 +26,7 @@ Tilix therefore never received the VTE integration.
 nano ~/.bashrc
 ```
 
-### 2. Add this block near the bottom:
+### 2. Added this block near the bottom:
 ```bash
 # VTE / Tilix integration (fix Tilix warning)
 if [[ -n "$TILIX_ID" || -n "$VTE_VERSION" ]]; then
