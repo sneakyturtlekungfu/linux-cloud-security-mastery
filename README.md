@@ -118,10 +118,5 @@ The repository will continue to grow as more topics are explored, including:
 Each addition will follow the same practice-oriented philosophy:
 understand the system, document the process, refine the solution.
 
----
 
-## License
-
-This work is provided for learning, skill development, and personal documentation.  
-Use and adapt freely.
 
