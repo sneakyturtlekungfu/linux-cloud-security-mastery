@@ -101,19 +101,6 @@ This is the kind of knowledge hiring managers want to see in junior–mid Linux/
 
 ---
 
-## 📈 What This Repository Demonstrates to Employers
-
-✔ Strong Linux fundamentals  
-✔ Ability to troubleshoot real issues  
-✔ Clear documentation and communication  
-✔ Cloud familiarity  
-✔ Automation mindset  
-✔ Security awareness  
-✔ Attention to detail (many small fixes documented clearly)  
-✔ Active learning + ownership of skill development  
-
----
-
 ## 📬 Contact
 
 **Benjamin Panzer**  
