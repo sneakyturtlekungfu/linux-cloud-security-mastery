@@ -1,134 +1,153 @@
-🚀 sgit — Super Git Automation Tool (Linux Admin Toolkit)
+# 🚀 sgit — Super Git Automation Tool (Linux Admin Toolkit)
 
-Date: 2025-11-24
-System: Linux (RHEL / Arch / Ubuntu / Fedora)
-Category: Tools → Git / Automation
+**Date:** 2025-11-24  
+**System:** Linux (RHEL / Arch / Ubuntu / Fedora)  
+**Category:** Tools → Git / Automation  
 
-Problem
+---
+
+## Problem
 
 During fast-paced Linux administration, scripting, documentation, and lab development, Git workflows can become repetitive and slow:
 
-Checking status
+- Checking status
+- Staging files
+- Writing commit messages
+- Pushing changes
 
-Staging files
+Running these as separate commands interrupts your flow and makes it harder to stay focused on the actual work (labs, configs, notes) instead of Git plumbing.
 
-Writing commit messages
+---
 
-Pushing changes
+## Solution
 
-Running these as separate commands interrupts your flow and slows down rapid learning and documentation.
+`sgit` is a **one-command Git helper** that automates the entire workflow. It:
 
-Solution
+- Shows the current branch
+- Displays a short, clean status view (`git status -sb`)
+- Stages **all** modified / new / deleted files
+- Creates a **timestamped commit message**
+- Pushes the commit to `origin/<branch>`
+- Prints clear, readable output
 
-sgit is a one-command Git helper that automates the full workflow.
-It:
+This makes `sgit` ideal for personal repos, lab environments, and rapid documentation commits.
 
-Shows the current branch
+---
 
-Displays a short, clean Git status (git status -sb)
+## Usage
 
-Automatically stages all modified/new/deleted files
+From inside any Git repository, run:
 
-Creates a timestamped commit message
+    sgit
 
-Pushes the commit to origin/<branch>
+Example output:
 
-Produces clean, readable output
+    === Super Git ===
+    Current branch: main
 
-Perfect for personal repos, rapid lab notes, and fast Git documentation.
+    == Status ==
+    ## main...origin/main
 
-Usage
+    == Adding all changes ==
 
-From inside any Git repository, simply run:
+    == Committing ==
+    Message: Auto-commit on 2025-11-24 21:24:20
 
-sgit
+    == Pushing to origin/main ==
 
-Example Output
-=== Super Git ===
-Current branch: main
+    === Done! 🚀 ===
 
-== Status ==
-## main...origin/main
+---
 
-== Adding all changes ==
+## Features
 
-== Committing ==
-Message: Auto-commit on 2025-11-24 21:24:20
+- ⚡ One-command workflow: status → add → commit → push
+- 🕒 Timestamp-based commit messages
+- 🧹 Clean status output using `git status -sb`
+- 📤 Direct push to the current branch
+- 🏎️ Fast workflow for notes, scripts, and admin repos
+- 🧰 Simple Bash script, easy to read and extend
 
-== Pushing to origin/main ==
+---
 
-=== Done! 🚀 ===
-
-Features
-
-⚡ Automatic staging of all changes
-
-🕒 Timestamp-based commit messages
-
-🧼 Clean status output using git status -sb
-
-📤 Direct push to current branch
-
-🏎️ Fast workflow for notes, scripts, and admin repos
-
-💡 Simple Bash implementation, easy to modify
-
-Script Location
+## Script Location
 
 Repository path:
 
-linux-admin/tools/supergit.sh
+    linux-admin/tools/supergit.sh
 
+---
 
-Installed alias on your system:
+## Alias
 
-alias sgit="$HOME/linux-cloud-security-mastery/linux-admin/tools/supergit.sh"
+To use `sgit` as a shortcut on your system, define:
 
+    alias sgit="$HOME/linux-cloud-security-mastery/linux-admin/tools/supergit.sh"
 
-This gives you a one-word Git automation command.
+This gives you a quick one-word Git automation command.
 
-Implementation
+---
 
-supergit.sh performs the following steps:
+## Implementation
 
-Detects the active Git branch
+`supergit.sh` performs the following steps:
 
-Prints branch + clean status
+- Detects the active Git branch
+- Prints the branch name and a clean status
+- Stages all changed files (`git add -A`)
+- Exits cleanly if there is nothing to commit
+- Builds an automatic timestamped commit message
+- Pushes directly to `origin/<current branch>`
+- Prints a final success banner
 
-Stages all changed files (git add -A)
+This keeps the tool:
 
-Commits with an automatic timestamp message
+- Easy to maintain
+- Easy to understand at a glance
+- Safe and convenient for personal and lab workflows
 
-Pushes directly to origin/<current branch>
+---
 
-Prints a success confirmation banner
+## Full Script (Reference)
 
-Full Script
-#!/usr/bin/env bash
+    #!/usr/bin/env bash
 
-echo "=== Super Git ==="
+    echo -e "\n=== Super Git ==="
 
-# Current branch
-branch=$(git rev-parse --abbrev-ref HEAD)
-echo "Current branch: $branch"
-echo
+    # Ensure we're inside a Git repo
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        echo "Error: Not inside a Git repository."
+        exit 1
+    fi
 
-echo "== Status =="
-git status -sb
-echo
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    echo "Current branch: $BRANCH"
 
-echo "== Adding all changes =="
-git add -A
-echo
+    echo
+    echo "== Status =="
+    git status -sb
 
-echo "== Committing =="
-msg="Auto-commit on $(date '+%Y-%m-%d %H:%M:%S')"
-echo "Message: $msg"
-git commit -m "$msg"
-echo
+    # Auto-add all changes
+    echo
+    echo "== Adding all changes =="
+    git add -A
 
-echo "== Pushing to origin/$branch =="
-git push origin "$branch"
-echo
+    # If nothing changed, stop
+    if git diff --cached --quiet; then
+        echo "No changes to commit."
+        exit 0
+    fi
 
-echo "=== Done! 🚀 ==="
+    # Auto-commit with timestamp
+    MESSAGE="Auto-commit on $(date '+%Y-%m-%d %H:%M:%S')"
+    echo
+    echo "== Committing =="
+    echo "Message: $MESSAGE"
+    git commit -m "$MESSAGE"
+
+    # Auto-push
+    echo
+    echo "== Pushing to origin/$BRANCH =="
+    git push origin "$BRANCH"
+
+    echo -e "\n=== Done! 🚀 ==="
