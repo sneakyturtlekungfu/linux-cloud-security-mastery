@@ -33,6 +33,8 @@ These aliases shorten common Git commands:
 
 - `clearsnaps`  
   Runs a script that clears all files from `~/Pictures/Screenshots` so the screenshot folder stays clean.
+- **fs** → Runs the `fsearch` filesystem search tool.  
+  Full tool documentation: [fsearch tool](../tools/README.md)
 
 ## Purpose
 
