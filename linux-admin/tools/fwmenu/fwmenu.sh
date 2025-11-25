@@ -1,294 +1,328 @@
 #!/usr/bin/env bash
-#
-# fwmenu.sh - Interactive firewalld menu for RHEL-based systems
-# Categories: Status, Zones, Services/Ports, Rich Rules, Security/Hardening, NAT
-#
+# fwmenu.sh — Interactive firewalld menu for RHEL-based systems
+# Color UI using simple ANSI escape sequences.
 
 FWCMD="sudo firewall-cmd"
 SYSCMD="sudo systemctl"
 
+# --------------------------------------------------------------------
+# Color UI (ANSI)
+# --------------------------------------------------------------------
+
+COLOR_RESET="\033[0m"
+COLOR_BOLD="\033[1m"
+COLOR_DIM="\033[2m"
+
+COLOR_RED="\033[31m"
+COLOR_GREEN="\033[32m"
+COLOR_YELLOW="\033[33m"
+COLOR_BLUE="\033[34m"
+COLOR_MAGENTA="\033[35m"
+COLOR_CYAN="\033[36m"
+COLOR_WHITE="\033[37m"
+
+title_bar() {
+    local text="$1"
+    printf "\n${COLOR_BOLD}${COLOR_CYAN}%s${COLOR_RESET}\n" "$text"
+    printf "${COLOR_DIM}%s${COLOR_RESET}\n" "$(printf '%.0s=' $(seq 1 ${#text}))"
+}
+
+menu_option() {
+    local key="$1"
+    local label="$2"
+    printf "  ${COLOR_GREEN}[%s]${COLOR_RESET} %s\n" "$key" "$label"
+}
+
+warning_text() {
+    printf "\n${COLOR_BOLD}${COLOR_RED}%s${COLOR_RESET}\n" "$1"
+}
+
+info_text() {
+    printf "\n${COLOR_DIM}%s${COLOR_RESET}\n" "$1"
+}
+
 pause() {
-    read -rp "Press Enter to continue..." _
+    read -rp "Press Enter to continue..."
 }
 
 check_firewalld() {
     if ! command -v firewall-cmd >/dev/null 2>&1; then
-        echo "firewall-cmd not found. Is firewalld installed?"
+        warning_text "firewall-cmd not found. Is firewalld installed?"
         exit 1
     fi
 }
 
-# --- CATEGORY 1: STATUS & INFO ----------------------------------------------
-
-menu_status() {
+# --------------------------------------------------------------------
+# MENU: Status & Information
+# --------------------------------------------------------------------
+status_info_menu() {
     while true; do
         clear
-        echo "=== Firewalld: Status & Information ==="
-        echo "1) Show firewalld state"
-        echo "2) Show firewalld systemd status"
-        echo "3) Show firewalld version"
-        echo "4) Show default zone"
-        echo "5) Show all zones"
-        echo "6) Show active zone details"
-        echo "0) Back to main menu"
-        echo
-        read -rp "Choose an option: " ans
-        case "$ans" in
-            1) $FWCMD --state; pause ;;
-            2) $SYSCMD status firewalld; pause ;;
-            3) $FWCMD --version; pause ;;
-            4) $FWCMD --get-default-zone; pause ;;
-            5) $FWCMD --get-zones; pause ;;
-            6) $FWCMD --list-all; pause ;;
-            0) break ;;
-            *) echo "Invalid choice"; pause ;;
+        title_bar "Firewalld: Status & Information"
+
+        menu_option 1 "Show firewalld state"
+        menu_option 2 "Show firewalld systemd status"
+        menu_option 3 "Show firewalld version"
+        menu_option 4 "Show default zone"
+        menu_option 5 "Show all zones"
+        menu_option 6 "Show active zone details"
+        menu_option 0 "Back to main menu"
+
+        printf "\n"
+        read -rp "Choose an option: " opt
+        printf "\n"
+
+        case "$opt" in
+            1) $FWCMD --state; pause;;
+            2) $SYSCMD status firewalld; pause;;
+            3) $FWCMD --version; pause;;
+            4) $FWCMD --get-default-zone; pause;;
+            5) $FWCMD --get-zones; pause;;
+            6) $FWCMD --get-active-zones; pause;;
+            0) return;;
+            *) warning_text "Invalid option.";;
         esac
     done
 }
 
-# --- CATEGORY 2: ZONES & INTERFACES -----------------------------------------
-
-menu_zones() {
+# --------------------------------------------------------------------
+# MENU: Zones & Interfaces
+# --------------------------------------------------------------------
+zones_menu() {
     while true; do
         clear
-        echo "=== Firewalld: Zones & Interfaces ==="
-        echo "1) List all zones with details (runtime)"
-        echo "2) Show active zone details"
-        echo "3) Show public zone details"
-        echo "4) Change default zone"
-        echo "5) Attach interface to zone"
-        echo "0) Back to main menu"
-        echo
-        read -rp "Choose an option: " ans
-        case "$ans" in
-            1) $FWCMD --list-all-zones; pause ;;
-            2) $FWCMD --list-all; pause ;;
-            3) $FWCMD --zone=public --list-all; pause ;;
+        title_bar "Firewalld: Zones & Interfaces"
+
+        menu_option 1 "List all zones with details (runtime)"
+        menu_option 2 "Show active zone details"
+        menu_option 3 "Show public zone details"
+        menu_option 4 "Change default zone"
+        menu_option 5 "Attach interface to zone"
+        menu_option 0 "Back to main menu"
+
+        printf "\n"
+        read -rp "Choose an option: " opt
+        printf "\n"
+
+        case "$opt" in
+            1) $FWCMD --list-all-zones; pause;;
+            2) $FWCMD --get-active-zones; pause;;
+            3) $FWCMD --zone=public --list-all; pause;;
             4)
-                read -rp "New default zone: " z
-                $FWCMD --set-default-zone="$z"
+                read -rp "Enter new default zone: " zone
+                printf "\n"
+                $FWCMD --set-default-zone="$zone"
                 pause
                 ;;
             5)
                 read -rp "Interface (e.g. enp0s3): " iface
-                read -rp "Zone (default: public): " z
-                z=${z:-public}
-                $FWCMD --zone="$z" --change-interface="$iface"
+                read -rp "Zone (e.g. public): " zone
+                printf "\n"
+                $FWCMD --zone="$zone" --change-interface="$iface"
                 pause
                 ;;
-            0) break ;;
-            *) echo "Invalid choice"; pause ;;
+            0) return;;
+            *) warning_text "Invalid option.";;
         esac
     done
 }
 
-# --- CATEGORY 3: SERVICES & PORTS -------------------------------------------
-
-menu_services_ports() {
+# --------------------------------------------------------------------
+# MENU: Services & Ports
+# --------------------------------------------------------------------
+services_menu() {
     while true; do
         clear
-        echo "=== Firewalld: Services & Ports ==="
-        echo "1) List allowed services (current zone)"
-        echo "2) List open ports (current zone)"
-        echo "3) Add service"
-        echo "4) Remove service"
-        echo "5) Add port"
-        echo "6) Remove port"
-        echo "7) Runtime -> Permanent sync"
-        echo "0) Back to main menu"
-        echo
-        read -rp "Choose an option: " ans
-        case "$ans" in
-            1) $FWCMD --list-services; pause ;;
-            2) $FWCMD --list-ports; pause ;;
+        title_bar "Firewalld: Services & Ports"
+
+        menu_option 1 "List active services"
+        menu_option 2 "Enable a service (permanent)"
+        menu_option 3 "Disable a service (permanent)"
+        menu_option 4 "Open a port (permanent)"
+        menu_option 5 "Close a port (permanent)"
+        menu_option 0 "Back to main menu"
+
+        printf "\n"
+        read -rp "Choose an option: " opt
+        printf "\n"
+
+        case "$opt" in
+            1) $FWCMD --list-services; pause;;
+            2)
+                read -rp "Service name (e.g. ssh, https): " svc
+                printf "\n"
+                $FWCMD --permanent --add-service="$svc"
+                pause
+                ;;
             3)
-                read -rp "Service name (e.g. ssh, https): " srv
-                read -rp "Zone (default: public): " z
-                z=${z:-public}
-                read -rp "Permanent? (y/N): " perm
-                if [[ $perm =~ ^[Yy]$ ]]; then
-                    $FWCMD --permanent --zone="$z" --add-service="$srv"
-                else
-                    $FWCMD --zone="$z" --add-service="$srv"
-                fi
+                read -rp "Service name (e.g. ssh, https): " svc
+                printf "\n"
+                $FWCMD --permanent --remove-service="$svc"
                 pause
                 ;;
             4)
-                read -rp "Service name (e.g. ssh, https): " srv
-                read -rp "Zone (default: public): " z
-                z=${z:-public}
-                read -rp "Permanent? (y/N): " perm
-                if [[ $perm =~ ^[Yy]$ ]]; then
-                    $FWCMD --permanent --zone="$z" --remove-service="$srv"
-                else
-                    $FWCMD --zone="$z" --remove-service="$srv"
-                fi
+                read -rp "Port/protocol (e.g. 8080/tcp): " port
+                printf "\n"
+                $FWCMD --permanent --add-port="$port"
                 pause
                 ;;
             5)
-                read -rp "Port (e.g. 22/tcp, 443/tcp): " port
-                read -rp "Zone (default: public): " z
-                z=${z:-public}
-                read -rp "Permanent? (y/N): " perm
-                if [[ $perm =~ ^[Yy]$ ]]; then
-                    $FWCMD --permanent --zone="$z" --add-port="$port"
-                else
-                    $FWCMD --zone="$z" --add-port="$port"
-                fi
+                read -rp "Port/protocol (e.g. 8080/tcp): " port
+                printf "\n"
+                $FWCMD --permanent --remove-port="$port"
                 pause
                 ;;
-            6)
-                read -rp "Port (e.g. 22/tcp, 443/tcp): " port
-                read -rp "Zone (default: public): " z
-                z=${z:-public}
-                read -rp "Permanent? (y/N): " perm
-                if [[ $perm =~ ^[Yy]$ ]]; then
-                    $FWCMD --permanent --zone="$z" --remove-port="$port"
-                else
-                    $FWCMD --zone="$z" --remove-port="$port"
-                fi
-                pause
-                ;;
-            7)
-                $FWCMD --runtime-to-permanent
-                echo "Runtime configuration saved as permanent."
-                pause
-                ;;
-            0) break ;;
-            *) echo "Invalid choice"; pause ;;
+            0) return;;
+            *) warning_text "Invalid option.";;
         esac
     done
 }
 
-# --- CATEGORY 4: RICH RULES (ADVANCED POLICY) -------------------------------
-
-menu_rich_rules() {
+# --------------------------------------------------------------------
+# MENU: Rich Rules
+# --------------------------------------------------------------------
+rich_rules_menu() {
     while true; do
         clear
-        echo "=== Firewalld: Rich Rules (Advanced Policy) ==="
-        echo "1) List rich rules (runtime)"
-        echo "2) List rich rules (permanent)"
-        echo "3) Add rich rule (runtime)"
-        echo "4) Add rich rule (permanent)"
-        echo "5) Remove rich rule (runtime)"
-        echo "6) Remove rich rule (permanent)"
-        echo "0) Back to main menu"
-        echo
-        read -rp "Choose an option: " ans
-        case "$ans" in
-            1) $FWCMD --list-rich-rules; pause ;;
-            2) $FWCMD --permanent --list-rich-rules; pause ;;
+        title_bar "Firewalld: Rich Rules"
+
+        menu_option 1 "List rich rules"
+        menu_option 2 "Add allow rule (source → service)"
+        menu_option 3 "Add deny rule (source → service)"
+        menu_option 4 "Remove rule (paste full rule)"
+        menu_option 0 "Back to main menu"
+
+        printf "\n"
+        read -rp "Choose: " opt
+        printf "\n"
+
+        case "$opt" in
+            1) $FWCMD --list-rich-rules; pause;;
+            2)
+                read -rp "Source CIDR (e.g. 10.0.0.0/24): " src
+                read -rp "Service name (e.g. ssh): " svc
+                printf "\n"
+                $FWCMD --add-rich-rule="rule family='ipv4' source address='$src' service name='$svc' accept"
+                pause
+                ;;
             3)
-                echo "Enter rich rule (example:"
-                echo "  rule family=\"ipv4\" source address=\"10.0.0.0/24\" service name=\"ssh\" accept"
-                read -rp "Rule: " rule
-                $FWCMD --add-rich-rule="$rule"
+                read -rp "Source CIDR (e.g. 0.0.0.0/0): " src
+                read -rp "Service name (e.g. ssh): " svc
+                printf "\n"
+                $FWCMD --add-rich-rule="rule family='ipv4' source address='$src' service name='$svc' reject"
                 pause
                 ;;
             4)
-                echo "Enter rich rule (permanent):"
-                read -rp "Rule: " rule
-                $FWCMD --permanent --add-rich-rule="$rule"
-                pause
-                ;;
-            5)
-                echo "Enter exact rich rule to remove (runtime):"
-                read -rp "Rule: " rule
+                info_text "Tip: you can copy a rule from 'List rich rules' and paste it here."
+                read -rp "Full rich rule to remove: " rule
+                printf "\n"
                 $FWCMD --remove-rich-rule="$rule"
                 pause
                 ;;
-            6)
-                echo "Enter exact rich rule to remove (permanent):"
-                read -rp "Rule: " rule
-                $FWCMD --permanent --remove-rich-rule="$rule"
+            0) return;;
+            *) warning_text "Invalid option.";;
+        esac
+    done
+}
+
+# --------------------------------------------------------------------
+# MENU: Security & Hardening
+# --------------------------------------------------------------------
+security_menu() {
+    while true; do
+        clear
+        title_bar "Firewalld: Security & Hardening"
+
+        menu_option 1 "Enable panic mode (drop ALL traffic)"
+        menu_option 2 "Disable panic mode"
+        menu_option 3 "Enable lockdown mode"
+        menu_option 4 "Disable lockdown mode"
+        menu_option 5 "Validate config (--check-config)"
+        menu_option 6 "Save runtime config as permanent"
+        menu_option 0 "Back to main menu"
+
+        printf "\n"
+        read -rp "Choose: " opt
+        printf "\n"
+
+        case "$opt" in
+            1)
+                warning_text "WARNING: Panic mode drops ALL traffic to and from this host."
+                read -rp "Type YES to continue: " confirm
+                if [[ "$confirm" == "YES" ]]; then
+                    $FWCMD --panic-on
+                else
+                    info_text "Panic mode not enabled."
+                fi
                 pause
                 ;;
-            0) break ;;
-            *) echo "Invalid choice"; pause ;;
+            2) $FWCMD --panic-off; pause;;
+            3) $FWCMD --lockdown-on; pause;;
+            4) $FWCMD --lockdown-off; pause;;
+            5) $FWCMD --check-config; pause;;
+            6) $FWCMD --runtime-to-permanent; pause;;
+            0) return;;
+            *) warning_text "Invalid option.";;
         esac
     done
 }
 
-# --- CATEGORY 5: SECURITY / HARDENING CONTROLS ------------------------------
-
-menu_security() {
+# --------------------------------------------------------------------
+# MENU: NAT / Masquerading
+# --------------------------------------------------------------------
+nat_menu() {
     while true; do
         clear
-        echo "=== Firewalld: Security / Hardening Controls ==="
-        echo "1) Enable panic mode (drop all traffic)"
-        echo "2) Disable panic mode"
-        echo "3) Show panic mode status"
-        echo "4) Enable lockdown mode"
-        echo "5) Disable lockdown mode"
-        echo "6) Show lockdown status"
-        echo "7) Validate configuration (check-config)"
-        echo "0) Back to main menu"
-        echo
-        read -rp "Choose an option: " ans
-        case "$ans" in
-            1) $FWCMD --panic-on; pause ;;
-            2) $FWCMD --panic-off; pause ;;
-            3) $FWCMD --query-panic; pause ;;
-            4) $FWCMD --lockdown-on; pause ;;
-            5) $FWCMD --lockdown-off; pause ;;
-            6) $FWCMD --query-lockdown; pause ;;
-            7) $FWCMD --check-config; pause ;;
-            0) break ;;
-            *) echo "Invalid choice"; pause ;;
+        title_bar "Firewalld: NAT / Masquerading"
+
+        menu_option 1 "Enable masquerading (permanent)"
+        menu_option 2 "Disable masquerading (permanent)"
+        menu_option 0 "Back to main menu"
+
+        printf "\n"
+        read -rp "Choose: " opt
+        printf "\n"
+
+        case "$opt" in
+            1) $FWCMD --permanent --add-masquerade; pause;;
+            2) $FWCMD --permanent --remove-masquerade; pause;;
+            0) return;;
+            *) warning_text "Invalid option.";;
         esac
     done
 }
 
-# --- CATEGORY 6: NAT / MASQUERADING ----------------------------------------
-
-menu_nat() {
-    while true; do
-        clear
-        echo "=== Firewalld: NAT / Masquerading ==="
-        echo "1) Enable masquerading (runtime)"
-        echo "2) Disable masquerading (runtime)"
-        echo "3) Enable masquerading (permanent)"
-        echo "4) Disable masquerading (permanent)"
-        echo "0) Back to main menu"
-        echo
-        read -rp "Choose an option: " ans
-        case "$ans" in
-            1) $FWCMD --add-masquerade; pause ;;
-            2) $FWCMD --remove-masquerade; pause ;;
-            3) $FWCMD --permanent --add-masquerade; pause ;;
-            4) $FWCMD --permanent --remove-masquerade; pause ;;
-            0) break ;;
-            *) echo "Invalid choice"; pause ;;
-        esac
-    done
-}
-
-# --- MAIN MENU --------------------------------------------------------------
-
+# --------------------------------------------------------------------
+# MAIN MENU
+# --------------------------------------------------------------------
 main_menu() {
     check_firewalld
+
     while true; do
         clear
-        echo "=========== Firewalld Admin Menu ==========="
-        echo "1) Status & Information"
-        echo "2) Zones & Interfaces"
-        echo "3) Services & Ports"
-        echo "4) Rich Rules (Advanced Policy)"
-        echo "5) Security / Hardening Controls"
-        echo "6) NAT / Masquerading"
-        echo "0) Exit"
-        echo "============================================"
-        echo
-        read -rp "Choose a category: " choice
-        case "$choice" in
-            1) menu_status ;;
-            2) menu_zones ;;
-            3) menu_services_ports ;;
-            4) menu_rich_rules ;;
-            5) menu_security ;;
-            6) menu_nat ;;
-            0) clear; exit 0 ;;
-            *) echo "Invalid choice"; pause ;;
+        title_bar "=== Firewalld Admin Menu ==="
+
+        menu_option 1 "Status & Information"
+        menu_option 2 "Zones & Interfaces"
+        menu_option 3 "Services & Ports"
+        menu_option 4 "Rich Rules"
+        menu_option 5 "Security & Hardening"
+        menu_option 6 "NAT / Masquerading"
+        menu_option 0 "Exit"
+
+        printf "\n"
+        read -rp "Choose an option: " opt
+        printf "\n"
+
+        case "$opt" in
+            1) status_info_menu;;
+            2) zones_menu;;
+            3) services_menu;;
+            4) rich_rules_menu;;
+            5) security_menu;;
+            6) nat_menu;;
+            0) clear; exit 0;;
+            *) warning_text "Invalid option.";;
         esac
     done
 }
