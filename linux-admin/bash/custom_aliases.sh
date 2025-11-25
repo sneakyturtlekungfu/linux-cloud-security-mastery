@@ -55,3 +55,7 @@ alias gcd='cd "$HOME/linux-cloud-security-mastery"'
 #   esac
 #
 alias clearsnaps="$HOME/bin/clearsnaps.sh"
+# ---- Git & admin tools ----
+alias sgit="$HOME/linux-cloud-security-mastery/linux-admin/tools/supergit.sh"
+alias fwmenu="$HOME/linux-cloud-security-mastery/linux-admin/tools/fwmenu"
+alias fsearch="$HOME/linux-cloud-security-mastery/linux-admin/tools/fsearch.sh"
