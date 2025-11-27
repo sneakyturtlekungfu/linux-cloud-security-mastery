@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RHEL WSL • Podman • Ansible Demo</title>
+  <style>
+    html { color-scheme: light dark; }
+    body { max-width: 800px; margin: 2rem auto; font-family: system-ui, sans-serif; }
+    h1 { margin-bottom: 0.25rem; }
+    .tagline { color: #555; margin-bottom: 1rem; }
+    code { background: #f4f4f4; padding: 0.15rem 0.35rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>RHEL WSL – Podman + Ansible Webstack</h1>
+  <div class="tagline">Deployed automatically with Ansible onto a RHEL-on-WSL host.</div>
+
+  <p>Maintainer: <strong>Benjamin Panzer (sneakyturtlekungfu)</strong></p>
+  <p>Project repo:
+    <a href="https://github.com/sneakyturtlekungfu/linux-cloud-security-mastery">
+      linux-cloud-security-mastery
+    </a>
+  </p>
+
+  <h2>What this demo shows</h2>
+  <ul>
+    <li>Podman pod named <code>webstack</code></li>
+    <li>Nginx front-end serving this page</li>
+    <li><code>whoami</code> backend container sharing the same pod</li>
+  </ul>
+
+  <p>Example backend check from the host:</p>
+  <pre><code>podman exec -it webstack-web curl http://127.0.0.1</code></pre>
+</body>
+</html>

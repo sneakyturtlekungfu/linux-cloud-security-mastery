@@ -1,0 +1,22 @@
+---
+- name: Ensure Podman pod exists
+  containers.podman.podman_pod:
+    name: "{{ podman_pod_name }}"
+    state: started
+    publish:
+      - "{{ podman_pod_port }}:80"
+  become: false
+
+- name: Ensure containers in the pod are running
+  containers.podman.podman_container:
+    name: "{{ item.name }}"
+    image: "{{ item.image }}"
+    state: started
+    pod: "{{ podman_pod_name }}"
+    env: "{{ item.env | default({}) }}"
+    volume: "{{ item.volume_mounts | default([]) }}"
+    restart_policy: "unless-stopped"
+  loop: "{{ podman_containers }}"
+  loop_control:
+    label: "{{ item.name }}"
+  become: false

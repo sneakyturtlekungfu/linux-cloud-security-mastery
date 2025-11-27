@@ -1,0 +1,8 @@
+---
+- name: Deploy Podman webstack pod on RHEL (WSL)
+  hosts: local
+  become: false
+  gather_facts: true
+
+  roles:
+    - podman_pod_webstack

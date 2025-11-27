@@ -1,0 +1,17 @@
+podman_pod_name: webstack
+podman_pod_port: 8080
+
+podman_containers:
+  - name: web
+    image: docker.io/library/nginx:alpine
+    ports: []
+    env: {}
+    volume_mounts:
+      - "{{ inventory_dir | dirname | dirname }}/files/index.html:/usr/share/nginx/html/index.html:Z"
+
+  - name: whoami
+    image: docker.io/traefik/whoami
+    ports: []
+    env:
+      WHOAMI_NAME: "rhel-wsl-demo"
+    volume_mounts: []
